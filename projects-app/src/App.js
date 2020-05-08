@@ -6,15 +6,33 @@ function App() {
   const [projects, setProjects] = useState([]);
   console.log(projects);
 
-  useEffect(async () => {
-    const result = await axios("http://localhost:4000/api/project/");
-
-    setProjects(result.data);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const result = await axios("http://localhost:4000/api/project/");
+        // console.log({ data });
+        setProjects(result.data);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    fetchData();
   }, []);
+
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       await dispatch(getColleges(educationFormState.searchCollege));
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   }
+  //   fetchData();
+  // }, [dispatch, educationFormState.searchCollege]);
 
   return (
     <div>
-      <h1>FIRST PROJECT THAT FETCHED DATA FROM SERVER ITSELF</h1>
+      <h1>FIRST PROJECT THAT FETCHED DATA FROM SERVEdR ITSELF</h1>
 
       {projects.map((project) => {
         return (

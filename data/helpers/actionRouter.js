@@ -5,7 +5,13 @@ const router = express.Router();
 const Projects = require("./projectModel");
 const Actions = require("./actionModel");
 
-router.post("/:id/posts", validateUserId, validatePost, (req, res) => {
+router.post("/:id/posts", validateActionById, validateActions, (req, res) => {
+  const { id } = req.params;
+  //   console.log("req.body", req.body);
+  //   let { body } = req;
+
+  req.body.project_id = id;
+  console.log("body", req.body);
   Actions.insert(req.body)
     .then((article) => {
       res.status(200).json(article);
@@ -29,11 +35,11 @@ router.get("/", (req, res) => {
     });
 });
 
-router.get("/:id", validateUserId, (req, res) => {
+router.get("/:id", validateActionById, (req, res) => {
   res.status(200).json(req.user);
 });
 
-router.delete("/:id", validateUserId, (req, res) => {
+router.delete("/:id", validateActionById, (req, res) => {
   Actions.remove(req.user.id)
     .then((deleteThis) => {
       console.log(deleteThis);
@@ -49,7 +55,7 @@ router.delete("/:id", validateUserId, (req, res) => {
     .then();
 });
 
-router.put("/:id", validateUserId, (req, res) => {
+router.put("/:id", validateActionById, (req, res) => {
   Actions.update(req.params.id, req.body)
     .then((updated) => {
       console.log("put:", updated);
@@ -69,7 +75,7 @@ router.put("/:id", validateUserId, (req, res) => {
 
 //custom middleware
 
-function validateUserId(req, res, next) {
+function validateActionById(req, res, next) {
   Actions.get(req.params.id)
     .then((person) => {
       if (person === undefined) {
@@ -88,27 +94,27 @@ function validateUserId(req, res, next) {
 }
 
 function validateUser(req, res, next) {
-  if (req.body.project_id === undefined || req.body === null) {
+  if (req.body === null) {
     res.status(400).json({ message: "missing user data" });
-  } else if (req.body.project_id === "" || req.body.project_id === null) {
+  } else if (req.body === "") {
     res.status(404).json({ message: "missing required name field" });
   } else {
     next();
   }
 }
 
-function validatePost(req, res, next) {
+function validateActions(req, res, next) {
   console.log(req.body.project_id);
   if (
-    req.body.project_id === undefined ||
+    // req.body.project_id === undefined ||
     req.body.description === undefined ||
     req.body.notes === undefined ||
     req.body === null
   ) {
     res.status(400).json({ message: "missing user data" });
   } else if (
-    req.body.project_id === "" ||
-    req.body.project_id === null ||
+    // req.body.project_id === "" ||
+    // req.body.project_id === null ||
     req.body.description === "" ||
     req.body.description === null ||
     req.body.notes === "" ||
